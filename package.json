@@ -1,0 +1,24 @@
+{
+  "name": "upload-course",
+  "version": "1.0.0",
+  "description": "Uploads a D2L zip into a canvas course, as part of our conversion tool.",
+  "main": "uploadCourse.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/byuitechops/upload-course.git"
+  },
+  "author": "Daniel Green",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/byuitechops/upload-course/issues"
+  },
+  "homepage": "https://github.com/byuitechops/upload-course#readme",
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "fs": "0.0.1-security",
+    "request": "^2.83.0"
+  }
+}
