@@ -77,6 +77,7 @@ module.exports = function (course, stepCallback) {
             console.log(chalk.green('Retrieved migration'));
             try {
                body = JSON.parse(body);
+               console.log(body);
             } catch (e) {
                throwError(e);
                return;
