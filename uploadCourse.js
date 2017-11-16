@@ -83,7 +83,7 @@ module.exports = function (course, stepCallback) {
             }
 
             if (body.errors) {
-               //console.log(chalk.red(JSON.stringify(body.errors.message)));
+               console.log(chalk.red(JSON.stringify(body.errors.message)));
                throwError(new Error(JSON.stringify(body.errors)));
                return;
             } else {
