@@ -174,9 +174,7 @@ module.exports = function (course, stepCallback) {
          migration_type: 'd2l_exporter',
          'pre_attachment[name]': course.info.zippedFilepath.split("\\")[course.info.zippedFilepath.split(
             "\\").length - 1],
-         'pre_attachment[size]': '34930210',
-         'pre_attachment[content_type]': 'application/zip',
-         'settings[folder_id]': auth.parentFolderId
+         'pre_attachment[content_type]': 'application/zip'
       },
       url = 'https://byui.instructure.com/api/v1/courses/' + course.info.canvasOU + '/content_migrations';
 
