@@ -20,7 +20,7 @@ module.exports = function (course, stepCallback) {
     * Add location to errs and pass them up
     ***************************************/
    function throwError(err) {
-      course.throwFatalErr("uploadCourse", err);
+      course.fatalError(err);
       stepCallback(err, course);
    }
 
@@ -44,8 +44,7 @@ module.exports = function (course, stepCallback) {
                console.log(chalk.blue('Import Progress:'), body.workflow_state);
                if (body.workflow_state === 'completed') {
                   clearInterval(checkLoop);
-                  //course.report.moduleLogs["importCourse"].changes.push('Zip successfully uploaded to Canvas');
-                  course.success('uploadCourse', 'Zip successfully uploaded to Canvas');
+                  course.message('Zip successfully uploaded to Canvas');
                   stepCallback(null, course);
                   return;
                } else if (body.workflow_state === 'failed' || body.workflow_state ===
@@ -65,8 +64,6 @@ module.exports = function (course, stepCallback) {
     * know the progressURL
     *******************************************/
    function getMigration(body) {
-      //console.log("Retrieving Migration");
-
       var url = 'https://byui.instructure.com/api/v1/courses/' + course.info.canvasOU +
          '/content_migrations/' + course.info.migrationID;
       request.get(url, function (err, response, body) {
@@ -155,7 +152,6 @@ module.exports = function (course, stepCallback) {
    function uploadZip(body) {
       //console.log(chalk.yellow('Migration Created'));
 
-      //course.info.migrationID = body.id
       course.newInfo('migrationID', body.id);
       var preAttachment = body.pre_attachment;
 
