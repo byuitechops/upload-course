@@ -166,48 +166,49 @@ module.exports = function (course, stepCallback) {
             request.post(postOptions, postCallback).auth(null, null, true, auth.token);
       else
             request.post(postOptions, postCallback);
+
+      /**************************************************
+       * Confirms the upload and calls getMigration
+       **************************************************/
+      function confirmUpload(response) {
+            //console.log(chalk.yellow('Upload Confirmed. Redirect URL obtained'));
+
+            var redirectUrl = response.headers.location;
+
+            postRequest(redirectUrl, {
+                  type: 'application/x-www-form-urlencoded'
+            }, true, getMigration);
+      }
+
+      /**************************************************************
+       * reads in the zip and uploads it to the URL provided by
+       * canvas. Calls postRequest with confirmUpload as the callback
+       **************************************************************/
+      function uploadZip(body) {
+            //console.log(chalk.yellow('Migration Created'));
+
+            course.newInfo('migrationID', body.id);
+            var preAttachment = body.pre_attachment;
+
+            preAttachment.upload_params.type = 'multipart/form-data';
+            preAttachment.upload_params.file = fs.createReadStream(course.info.zippedFilepath);
+
+            postRequest(preAttachment.upload_url, preAttachment.upload_params, false, confirmUpload);
+      }
+
+      /******************************************************************
+       * sets the data for the POST which informs canvas of the upload.
+       * sends the request via postRequest with uploadZIP as the callback
+       ******************************************************************/
+      var postBody = {
+                  type: 'application/x-www-form-urlencoded',
+                  migration_type: 'd2l_exporter',
+                  'pre_attachment[name]': course.info.zippedFilepath.split("\\")[course.info.zippedFilepath.split(
+                        "\\").length - 1],
+                  'pre_attachment[content_type]': 'application/zip'
+            },
+            url = 'https://byui.instructure.com/api/v1/courses/' + course.info.canvasOU + '/content_migrations';
+
+      postRequest(url, postBody, true, uploadZip);
+
 }
-
-/**************************************************
- * Confirms the upload and calls getMigration
- **************************************************/
-function confirmUpload(response) {
-      //console.log(chalk.yellow('Upload Confirmed. Redirect URL obtained'));
-
-      var redirectUrl = response.headers.location;
-
-      postRequest(redirectUrl, {
-            type: 'application/x-www-form-urlencoded'
-      }, true, getMigration);
-}
-
-/**************************************************************
- * reads in the zip and uploads it to the URL provided by
- * canvas. Calls postRequest with confirmUpload as the callback
- **************************************************************/
-function uploadZip(body) {
-      //console.log(chalk.yellow('Migration Created'));
-
-      course.newInfo('migrationID', body.id);
-      var preAttachment = body.pre_attachment;
-
-      preAttachment.upload_params.type = 'multipart/form-data';
-      preAttachment.upload_params.file = fs.createReadStream(course.info.zippedFilepath);
-
-      postRequest(preAttachment.upload_url, preAttachment.upload_params, false, confirmUpload);
-}
-
-/******************************************************************
- * sets the data for the POST which informs canvas of the upload.
- * sends the request via postRequest with uploadZIP as the callback
- ******************************************************************/
-var postBody = {
-            type: 'application/x-www-form-urlencoded',
-            migration_type: 'd2l_exporter',
-            'pre_attachment[name]': course.info.zippedFilepath.split("\\")[course.info.zippedFilepath.split(
-                  "\\").length - 1],
-            'pre_attachment[content_type]': 'application/zip'
-      },
-      url = 'https://byui.instructure.com/api/v1/courses/' + course.info.canvasOU + '/content_migrations';
-
-postRequest(url, postBody, true, uploadZip);
