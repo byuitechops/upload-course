@@ -14,6 +14,7 @@ const chalk = require('chalk'),
  * saves migrationId to course object
  **************************************/
 module.exports = function (course, stepCallback) {
+<<<<<<< HEAD
 
       /****************************************
        * Add location to errs and pass them up
@@ -106,6 +107,71 @@ module.exports = function (course, stepCallback) {
                   postOptions.formData = content;
             } else if (Object.keys(content).length > 0) {
                   postOptions.form = content;
+=======
+   course.addModuleReport("uploadCourse");
+
+   /****************************************
+    * Add location to errs and pass them up
+    ***************************************/
+   function throwError(err) {
+      course.fatalError(err);
+      stepCallback(err, course);
+   }
+
+   /**************************************
+    * GETs the status of the upload ONCE
+    *************************************/
+   function checkProgress(progressUrl) {
+      console.log("\nCanvas migration status:");
+      var checkLoop = setInterval(() => {
+         request.get(progressUrl, function (err, response, body) {
+            if (err) {
+               throwError(err);
+               return;
+            } else {
+               try {
+                  body = JSON.parse(body);
+               } catch (e) {
+                  throwError(e);
+                  return;
+               }
+               console.log(chalk.blue('Import Progress:'), body.workflow_state);
+               if (body.workflow_state === 'completed') {
+                  clearInterval(checkLoop);
+                  course.message('Zip successfully uploaded to Canvas');
+                  stepCallback(null, course);
+                  return;
+               } else if (body.workflow_state === 'failed' || body.workflow_state ===
+                  'waiting_for_select') {
+                  clearInterval(checkLoop);
+                  throwError(new Error(
+                     "Unknown error occured. Please check the status of the migration via Canvas UI"
+                  ));
+               }
+            }
+         }).auth(null, null, true, auth.token);
+      }, 5000);
+   }
+
+   /*********************************************
+    * GETs migration object so we can
+    * know the progressURL
+    *******************************************/
+   function getMigration(body) {
+      var url = 'https://byui.instructure.com/api/v1/courses/' + course.info.canvasOU +
+         '/content_migrations/' + course.info.migrationID;
+      request.get(url, function (err, response, body) {
+         if (err) {
+            throwError(err);
+            return;
+         } else {
+            console.log(chalk.green('Retrieved migration'));
+            try {
+               body = JSON.parse(body);
+            } catch (e) {
+               throwError(e);
+               return;
+>>>>>>> ffa6ddaa7729b71347aeca6982717f90b56b32e0
             }
 
             function postCallback(err, response, body) {
@@ -188,7 +254,6 @@ function confirmUpload(response) {
 function uploadZip(body) {
       //console.log(chalk.yellow('Migration Created'));
 
-      //course.info.migrationID = body.id
       course.newInfo('migrationID', body.id);
       var preAttachment = body.pre_attachment;
 
