@@ -161,11 +161,11 @@ module.exports = function (course, stepCallback) {
             preAttachment.upload_params.file = fs.createReadStream(course.info.zippedFilepath);
 
             postRequest(preAttachment.upload_url, preAttachment.upload_params, false, confirmUpload);
+            if (authRequired === true)
+                  request.post(postOptions, postCallback).auth(null, null, true, auth.token);
+            else
+                  request.post(postOptions, postCallback);
       }
-      if (authRequired === true)
-            request.post(postOptions, postCallback).auth(null, null, true, auth.token);
-      else
-            request.post(postOptions, postCallback);
 
       /**************************************************
        * Confirms the upload and calls getMigration
