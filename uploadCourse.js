@@ -50,7 +50,7 @@ module.exports = function (course, stepCallback) {
                         'waiting_for_select') {
                         clearInterval(checkLoop);
                         throwError(new Error(
-                            "Unknown error occured. Please check the status of the migration via Canvas UI"
+                            'Unknown error occured. Please check the status of the migration via Canvas UI'
                         ));
                     }
                 }
@@ -62,7 +62,7 @@ module.exports = function (course, stepCallback) {
      * GETs migration object so we can
      * know the progressURL
      *******************************************/
-    function getMigration(body) {
+    function getMigration() {
         //console.log("Retrieving Migration");
 
         var url = 'https://byui.instructure.com/api/v1/courses/' + course.info.canvasOU +
@@ -102,7 +102,7 @@ module.exports = function (course, stepCallback) {
             };
         delete content.type;
 
-        if (contentType === "multipart/form-data") {
+        if (contentType === 'multipart/form-data') {
             postOptions.formData = content;
         } else if (Object.keys(content).length > 0) {
             postOptions.form = content;
@@ -159,39 +159,11 @@ module.exports = function (course, stepCallback) {
         preAttachment.upload_params.file = fs.createReadStream(course.info.uploadZipPath);
 
         postRequest(preAttachment.upload_url, preAttachment.upload_params, false, confirmUpload);
-        if (authRequired === true)
+        /* what on earth is this stuff here for??? ACCIDENTALLY COPIED? */
+        /*  if (authRequired === true)
             request.post(postOptions, postCallback).auth(null, null, true, auth.token);
         else
-            request.post(postOptions, postCallback);
-    }
-
-    /**************************************************
-     * Confirms the upload and calls getMigration
-     **************************************************/
-    function confirmUpload(response) {
-        //console.log(chalk.yellow('Upload Confirmed. Redirect URL obtained'));
-
-        var redirectUrl = response.headers.location;
-
-        postRequest(redirectUrl, {
-            type: 'application/x-www-form-urlencoded'
-        }, true, getMigration);
-    }
-
-    /**************************************************************
-     * reads in the zip and uploads it to the URL provided by
-     * canvas. Calls postRequest with confirmUpload as the callback
-     **************************************************************/
-    function uploadZip(body) {
-        //console.log(chalk.yellow('Migration Created'));
-
-        course.newInfo('migrationID', body.id);
-        var preAttachment = body.pre_attachment;
-
-        preAttachment.upload_params.type = 'multipart/form-data';
-        preAttachment.upload_params.file = fs.createReadStream(course.info.uploadZipPath);
-
-        postRequest(preAttachment.upload_url, preAttachment.upload_params, false, confirmUpload);
+            request.post(postOptions, postCallback); */
     }
 
     /******************************************************************
@@ -201,8 +173,8 @@ module.exports = function (course, stepCallback) {
     var postBody = {
             type: 'application/x-www-form-urlencoded',
             migration_type: 'd2l_exporter',
-            'pre_attachment[name]': course.info.uploadZipPath.split("\\")[course.info.uploadZipPath.split(
-                "\\").length - 1],
+            'pre_attachment[name]': course.info.uploadZipPath.split('\\')[course.info.uploadZipPath.split(
+                '\\').length - 1],
             'pre_attachment[content_type]': 'application/zip'
         },
         url = 'https://byui.instructure.com/api/v1/courses/' + course.info.canvasOU + '/content_migrations';
