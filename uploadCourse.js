@@ -159,11 +159,6 @@ module.exports = function (course, stepCallback) {
         preAttachment.upload_params.file = fs.createReadStream(course.info.uploadZipPath);
 
         postRequest(preAttachment.upload_url, preAttachment.upload_params, false, confirmUpload);
-        /* what on earth is this stuff here for??? ACCIDENTALLY COPIED? */
-        /*  if (authRequired === true)
-            request.post(postOptions, postCallback).auth(null, null, true, auth.token);
-        else
-            request.post(postOptions, postCallback); */
     }
 
     /******************************************************************
