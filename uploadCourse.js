@@ -169,7 +169,7 @@ module.exports = function (course, stepCallback) {
                 '\\').length - 1],
             'pre_attachment[content_type]': 'application/zip'
         },
-        url = 'https://byui.instructure.com/api/v1/courses/' + course.info.canvasOU + '/content_migrations';
+        url = `https://${course.info.domain}.instructure.com/api/v1/courses/${course.info.canvasOU}/content_migrations`;
 
     postRequest(url, postBody, true, uploadZip);
 
