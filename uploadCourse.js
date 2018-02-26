@@ -127,7 +127,7 @@ module.exports = function (course, stepCallback) {
     }
 
     /**************************************************
-     * Confirms the upload and calls getMigration
+     * 3. Confirms the upload and calls getMigration
      **************************************************/
     function confirmUpload(response) {
         //console.log(chalk.yellow('Upload Confirmed. Redirect URL obtained'));
@@ -140,7 +140,7 @@ module.exports = function (course, stepCallback) {
     }
 
     /**************************************************************
-     * reads in the zip and uploads it to the URL provided by
+     * 2. reads in the zip and uploads it to the URL provided by
      * canvas. Calls postRequest with confirmUpload as the callback
      **************************************************************/
     function uploadZip(body) {
@@ -155,7 +155,7 @@ module.exports = function (course, stepCallback) {
     }
 
     /******************************************************************
-     * sets the data for the POST which informs canvas of the upload.
+     * 1. sets the data for the POST which informs canvas of the upload.
      * sends the request via postRequest with uploadZIP as the callback
      ******************************************************************/
     var postBody = {
