@@ -1,7 +1,3 @@
-/*eslint-env node, es6*/
-/*eslint no-console:0*/
-/*eslint no-inner-declarations:0*/
-
 'use-strict';
 
 const chalk = require('chalk'),
@@ -50,7 +46,7 @@ module.exports = function (course, stepCallback) {
                         'waiting_for_select') {
                         clearInterval(checkLoop);
                         throwError(new Error(
-                            'Unknown error occured. Please check the status of the migration via Canvas UI'
+                            'Unknown error occurred. Please check the status of the migration via Canvas UI'
                         ));
                     }
                 }
