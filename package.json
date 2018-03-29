@@ -18,6 +18,6 @@
   "homepage": "https://github.com/byuitechops/upload-course#readme",
   "dependencies": {
     "canvas-wrapper": "github:byuitechops/canvas-wrapper",
-    "chalk": "^2.3.0",
+    "chalk": "^2.3.0"
   }
 }
