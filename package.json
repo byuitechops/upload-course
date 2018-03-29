@@ -17,8 +17,7 @@
   },
   "homepage": "https://github.com/byuitechops/upload-course#readme",
   "dependencies": {
+    "canvas-wrapper": "github:byuitechops/canvas-wrapper",
     "chalk": "^2.3.0",
-    "fs": "0.0.1-security",
-    "request": "^2.83.0"
   }
 }
