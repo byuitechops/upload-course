@@ -9,23 +9,17 @@ const chalk = require('chalk'),
  **************************************/
 module.exports = function (course, stepCallback) {
 
-    /****************************************
-     * Add location to errs and pass them up
-     ***************************************/
-    function throwError(err) {
-        course.fatalError(err);
-        stepCallback(err, course);
-    }
-
     /**************************************
      * GETs the status of the upload ONCE
      *************************************/
     function checkProgress(progressUrl) {
         course.message('Canvas Migration Status:');
+        // TODO replace setInterval with recursive calls to avoid multiple calls to stepCallback
         var checkLoop = setInterval(() => {
             canvas.get(progressUrl, (err, migrations) => {
                 if (err) {
-                    throwError(err);
+                    course.fatalError(err);
+                    stepCallback(err, course);
                     return;
                 }
                 var migration = migrations[0];
@@ -38,7 +32,8 @@ module.exports = function (course, stepCallback) {
                     return;
                 } else if (migration.workflow_state === 'failed' || migration.workflow_state === 'waiting_for_select') {
                     clearInterval(checkLoop);
-                    throwError(new Error('Unknown error occurred. Please check the status of the migration via Canvas UI'));
+                    course.fatalError(new Error('Unknown error occurred. Please check the status of the migration via Canvas UI'));
+                    stepCallback(err, course);
                     return;
                 }
             });
@@ -53,7 +48,8 @@ module.exports = function (course, stepCallback) {
         var url = `https://${course.info.domain}.instructure.com/api/v1/courses/${course.info.canvasOU}/content_migrations/${course.info.migrationID}`;
         canvas.get(url, (err, migrations) => {
             if (err) {
-                throwError(err);
+                course.fatalError(err);
+                stepCallback(err, course);
                 return;
             }
             var migration = migrations[0];
@@ -61,7 +57,8 @@ module.exports = function (course, stepCallback) {
             course.message(chalk.green('Retrieved Migration'));
 
             if (migration.errors) {
-                throwError(new Error(JSON.stringify(migration.errors)));
+                course.fatalError(new Error(JSON.stringify(migration.errors)));
+                stepCallback(err, course);
                 return;
             } else {
                 checkProgress(migration.progress_url);
@@ -75,7 +72,8 @@ module.exports = function (course, stepCallback) {
      ***************************************/
     canvas.uploadCourse(course.info.canvasOU, course.info.uploadZipPath, (err, migration) => {
         if (err) {
-            throwError(err);
+            course.fatalError(err);
+            stepCallback(err, course);
             return;
         }
         course.newInfo('migrationID', migration.id);
