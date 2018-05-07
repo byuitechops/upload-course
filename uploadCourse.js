@@ -32,8 +32,9 @@ module.exports = function (course, stepCallback) {
                     return;
                 } else if (migration.workflow_state === 'failed' || migration.workflow_state === 'waiting_for_select') {
                     clearInterval(checkLoop);
-                    course.fatalError(new Error('Unknown error occurred. Please check the status of the migration via Canvas UI'));
-                    stepCallback(err, course);
+                    var unknownErr = new Error('Unknown error occurred. Please check the status of the migration via Canvas UI');
+                    course.fatalError(unknownErr);
+                    stepCallback(unknownErr, course);
                     return;
                 }
             });
@@ -57,8 +58,9 @@ module.exports = function (course, stepCallback) {
             course.message(chalk.green('Retrieved Migration'));
 
             if (migration.errors) {
-                course.fatalError(new Error(JSON.stringify(migration.errors)));
-                stepCallback(err, course);
+                var migrationErr = new Error(JSON.stringify(migration.errors));
+                course.fatalError(migrationErr);
+                stepCallback(migrationErr, course);
                 return;
             } else {
                 checkProgress(migration.progress_url);
