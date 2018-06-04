@@ -46,7 +46,7 @@ module.exports = function (course, stepCallback) {
      * know the progressURL
      *******************************************/
     function getMigration() {
-        var url = `https://${course.info.domain}.instructure.com/api/v1/courses/${course.info.canvasOU}/content_migrations/${course.info.migrationID}`;
+        var url = `https://byui.instructure.com/api/v1/courses/${course.info.canvasOU}/content_migrations/${course.info.migrationID}`;
         canvas.get(url, (err, migrations) => {
             if (err) {
                 course.fatalError(err);
