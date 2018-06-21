@@ -69,9 +69,16 @@ module.exports = function (course, stepCallback) {
     }
 
     /****************************************
+     * START HERE
      * Use the canvas wrapper to perform the 
      * 3 part file upload dance
      ***************************************/
+    if (course.info.canvasOU == undefined || course.info.canvasOU === 'unspecified' || course.info.canvasOU === '' ) {
+        var err = new Error('Missing CanvasOU. Unable to import course');
+        course.fatalError(err);
+        stepCallback(err, course);
+        return;
+    }
     canvas.uploadCourse(course.info.canvasOU, course.info.uploadZipPath, (err, migration) => {
         if (err) {
             course.fatalError(err);
